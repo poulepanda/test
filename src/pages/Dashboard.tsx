@@ -129,24 +129,24 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className={`${getCardClasses()} p-6 rounded-lg`}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
+        <div className={`${getCardClasses()} p-4 md:p-6 rounded-lg`}>
           <div className="flex items-center justify-between">
             <div>
               <p className={theme === 'light' ? 'text-sky-900' : 'text-gray-400'}>Total Factures</p>
-              <p className="text-2xl font-bold">{filteredFactures.length}</p>
+              <p className="text-xl md:text-2xl font-bold">{filteredFactures.length}</p>
             </div>
             <Receipt className={theme === 'light' ? 'h-8 w-8 text-sky-600' : 'h-8 w-8 text-blue-400'} />
           </div>
         </div>
 
-        <div className={`${getCardClasses()} p-6 rounded-lg`}>
+        <div className={`${getCardClasses()} p-4 md:p-6 rounded-lg`}>
           <div className="flex items-center justify-between">
             <div>
               <p className={theme === 'light' ? 'text-sky-900' : 'text-gray-400'}>Montant Total</p>
-              <p className="text-2xl font-bold">
+              <p className="text-xl md:text-2xl font-bold">
                 {filteredFactures.reduce((sum, f) => sum + f.prix, 0)}€
               </p>
             </div>
@@ -154,11 +154,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className={`${getCardClasses()} p-6 rounded-lg`}>
+        <div className={`${getCardClasses()} p-4 md:p-6 rounded-lg`}>
           <div className="flex items-center justify-between">
             <div>
               <p className={theme === 'light' ? 'text-sky-900' : 'text-gray-400'}>Dernière Facture</p>
-              <p className="text-2xl font-bold">
+              <p className="text-xl md:text-2xl font-bold">
                 {filteredFactures[0]?.created_at.split('T')[0] || '-'}
               </p>
             </div>
@@ -169,8 +169,8 @@ export default function Dashboard() {
 
       {/* Table */}
       <div className={`${getCardClasses()} rounded-lg overflow-hidden`}>
-        <div className="p-6">
-          <h2 className="text-xl font-bold mb-4">Liste des Factures</h2>
+        <div className="p-4 md:p-6">
+          <h2 className="text-lg md:text-xl font-bold mb-4">Liste des Factures</h2>
           
           {/* Search Input */}
           <div className="relative max-w-md mb-6">
@@ -188,80 +188,77 @@ export default function Dashboard() {
             />
           </div>
         </div>
-        {loading ? (
-          <div className="p-6 text-center">Chargement...</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className={getTableHeaderClasses()}>
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    N° Facture
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Nom
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Article
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Prix
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className={getTableHeaderClasses()}>
+              <tr>
+                <th className="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  N° Facture
+                </th>
+                <th className="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th className="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Nom
+                </th>
+                <th className="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Article
+                </th>
+                <th className="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Prix
+                </th>
+                <th className="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {filteredFactures.map((facture) => (
+                <tr key={facture.id} className={getTableRowHoverClasses()}>
+                  <td className="px-4 md:px-6 py-4 whitespace-nowrap">
+                    {facture.n_facture}
+                  </td>
+                  <td className="px-4 md:px-6 py-4 whitespace-nowrap">
+                    {new Date(facture.created_at).toLocaleDateString()}
+                  </td>
+                  <td className="px-4 md:px-6 py-4 whitespace-nowrap">
+                    {facture.nom}
+                  </td>
+                  <td className="px-4 md:px-6 py-4 whitespace-nowrap">
+                    {facture.article}
+                  </td>
+                  <td className="px-4 md:px-6 py-4 whitespace-nowrap">
+                    {facture.prix}€
+                  </td>
+                  <td className="px-4 md:px-6 py-4 whitespace-nowrap">
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => {
+                          setEditingFacture(facture);
+                          setIsModalOpen(true);
+                        }}
+                        className={`p-1 ${
+                          theme === 'light'
+                            ? 'text-sky-600 hover:text-sky-700'
+                            : 'text-blue-400 hover:text-blue-300'
+                        } transition-colors`}
+                      >
+                        <Pencil className="h-5 w-5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(facture.id)}
+                        className="p-1 text-red-400 hover:text-red-300 transition-colors"
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredFactures.map((facture) => (
-                  <tr key={facture.id} className={getTableRowHoverClasses()}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {facture.n_facture}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {new Date(facture.created_at).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {facture.nom}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {facture.article}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {facture.prix}€
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => {
-                            setEditingFacture(facture);
-                            setIsModalOpen(true);
-                          }}
-                          className={`p-1 ${
-                            theme === 'light'
-                              ? 'text-sky-600 hover:text-sky-700'
-                              : 'text-blue-400 hover:text-blue-300'
-                          } transition-colors`}
-                        >
-                          <Pencil className="h-5 w-5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(facture.id)}
-                          className="p-1 text-red-400 hover:text-red-300 transition-colors"
-                        >
-                          <Trash2 className="h-5 w-5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Edit Modal */}

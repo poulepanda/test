@@ -28,9 +28,9 @@ function AppContent() {
           path="/dashboard/*"
           element={
             <ProtectedRoute>
-              <div className="flex">
+              <div className="flex flex-col md:flex-row">
                 <Sidebar />
-                <div className="flex-1 ml-64">
+                <div className="flex-1 md:ml-64 w-full">
                   <Dashboard />
                 </div>
               </div>
@@ -41,9 +41,9 @@ function AppContent() {
           path="/site"
           element={
             <ProtectedRoute>
-              <div className="flex">
+              <div className="flex flex-col md:flex-row">
                 <Sidebar />
-                <div className="flex-1 ml-64">
+                <div className="flex-1 md:ml-64 w-full">
                   <Site />
                 </div>
               </div>
@@ -54,9 +54,9 @@ function AppContent() {
           path="/trades"
           element={
             <ProtectedRoute>
-              <div className="flex">
+              <div className="flex flex-col md:flex-row">
                 <Sidebar />
-                <div className="flex-1 ml-64">
+                <div className="flex-1 md:ml-64 w-full">
                   <Trades />
                 </div>
               </div>
@@ -67,9 +67,9 @@ function AppContent() {
           path="/trades-list"
           element={
             <ProtectedRoute>
-              <div className="flex">
+              <div className="flex flex-col md:flex-row">
                 <Sidebar />
-                <div className="flex-1 ml-64">
+                <div className="flex-1 md:ml-64 w-full">
                   <TradesList />
                 </div>
               </div>
@@ -91,4 +91,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
