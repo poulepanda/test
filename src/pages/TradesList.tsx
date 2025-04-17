@@ -86,12 +86,12 @@ export default function TradesList() {
     switch (status.toLowerCase()) {
       case 'pending':
         return theme === 'light' 
-          ? 'bg-blue-100 text-blue-800' 
-          : 'bg-blue-500 bg-opacity-10 text-blue-400';
+          ? 'bg-indigo-100 text-indigo-800' 
+          : 'bg-indigo-500 bg-opacity-10 text-indigo-400';
       case 'close':
         return theme === 'light' 
-          ? 'bg-orange-100 text-orange-800' 
-          : 'bg-orange-500 bg-opacity-10 text-orange-400';
+          ? 'bg-amber-100 text-amber-800' 
+          : 'bg-amber-500 bg-opacity-10 text-amber-400';
       default:
         return theme === 'light' 
           ? 'bg-gray-100 text-gray-800' 
