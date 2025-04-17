@@ -1,8 +1,23 @@
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { supabase } from '../lib/supabase';
 import type { Trade } from '../types/trade';
 import { useTheme } from '../contexts/ThemeContext';
+
+// Sample daily volume data
+const dailyVolumeData = [
+  { date: '2024-04-10', volume: 152420 },
+  { date: '2024-04-11', volume: 98750 },
+  { date: '2024-04-12', volume: 128940 },
+  { date: '2024-04-13', volume: 192200 },
+  { date: '2024-04-14', volume: 167280 },
+  { date: '2024-04-15', volume: 84320 },
+  { date: '2024-04-16', volume: 179650 },
+  { date: '2024-04-17', volume: 130980 },
+  { date: '2024-04-18', volume: 165440 },
+  { date: '2024-04-19', volume: 98920 }
+];
 
 export default function TradesList() {
   const { theme } = useTheme();
@@ -49,12 +64,10 @@ export default function TradesList() {
   function filterTrades() {
     let filtered = [...trades];
 
-    // Filter by status
     if (selectedStatus) {
       filtered = filtered.filter(trade => trade.status === selectedStatus);
     }
 
-    // Filter by search term
     if (searchTerm) {
       const search = searchTerm.toLowerCase();
       filtered = filtered.filter(trade => 
@@ -72,11 +85,17 @@ export default function TradesList() {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'pending':
-        return theme === 'light' ? 'bg-green-100 text-green-800' : 'bg-green-500 bg-opacity-10 text-green-500';
+        return theme === 'light' 
+          ? 'bg-blue-100 text-blue-800' 
+          : 'bg-blue-500 bg-opacity-10 text-blue-400';
       case 'close':
-        return theme === 'light' ? 'bg-red-100 text-red-800' : 'bg-red-500 bg-opacity-10 text-red-500';
+        return theme === 'light' 
+          ? 'bg-orange-100 text-orange-800' 
+          : 'bg-orange-500 bg-opacity-10 text-orange-400';
       default:
-        return theme === 'light' ? 'bg-yellow-100 text-yellow-800' : 'bg-yellow-500 bg-opacity-10 text-yellow-500';
+        return theme === 'light' 
+          ? 'bg-gray-100 text-gray-800' 
+          : 'bg-gray-500 bg-opacity-10 text-gray-400';
     }
   };
 
@@ -88,6 +107,10 @@ export default function TradesList() {
     return balance < 0 ? 'text-red-500' : 'text-green-500';
   };
 
+  const getTotalBalance = () => {
+    return filteredTrades.reduce((sum, trade) => sum + (trade.balance || 0), 0);
+  };
+
   const statuses = Array.from(new Set(trades.map(trade => trade.status))).filter(Boolean);
 
   return (
@@ -96,7 +119,82 @@ export default function TradesList() {
         <h1 className={`text-2xl font-bold mb-6 ${theme === 'light' ? 'text-sky-900' : 'text-white'}`}>
           Trades List
         </h1>
-        
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className={`${getCardClasses()} p-4 rounded-lg`}>
+            <div className={theme === 'light' ? 'text-sky-900' : 'text-gray-400'}>Total Trades</div>
+            <div className={`text-2xl font-bold ${theme === 'light' ? 'text-sky-900' : 'text-white'}`}>
+              {filteredTrades.length}
+            </div>
+          </div>
+          <div className={`${getCardClasses()} p-4 rounded-lg`}>
+            <div className={theme === 'light' ? 'text-sky-900' : 'text-gray-400'}>Total Volume</div>
+            <div className={`text-2xl font-bold ${theme === 'light' ? 'text-sky-900' : 'text-white'}`}>
+              {filteredTrades.reduce((sum, trade) => sum + trade.lot, 0).toFixed(2)}
+            </div>
+          </div>
+          <div className={`${getCardClasses()} p-4 rounded-lg`}>
+            <div className={theme === 'light' ? 'text-sky-900' : 'text-gray-400'}>Total Balance</div>
+            <div className={`text-2xl font-bold ${getBalanceColor(getTotalBalance())}`}>
+              €{getTotalBalance().toLocaleString()}
+            </div>
+          </div>
+          <div className={`${getCardClasses()} p-4 rounded-lg`}>
+            <div className={theme === 'light' ? 'text-sky-900' : 'text-gray-400'}>Status Distribution</div>
+            <div className="flex gap-2 mt-2">
+              {statuses.map(status => (
+                <span
+                  key={status}
+                  className={`px-2 py-1 rounded-full text-xs ${getStatusColor(status)}`}
+                >
+                  {status}: {filteredTrades.filter(t => t.status === status).length}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Daily Volume Chart */}
+        <div className={`${getCardClasses()} p-6 rounded-lg mb-6`}>
+          <h2 className={`text-xl font-bold mb-4 ${theme === 'light' ? 'text-sky-900' : 'text-white'}`}>
+            Daily Trading Volume
+          </h2>
+          <div className="h-[250px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={dailyVolumeData}>
+                <CartesianGrid 
+                  strokeDasharray="3 3" 
+                  stroke={theme === 'light' ? '#e2e8f0' : '#374151'} 
+                />
+                <XAxis 
+                  dataKey="date" 
+                  stroke={theme === 'light' ? '#64748b' : '#9CA3AF'}
+                  tick={{ fill: theme === 'light' ? '#64748b' : '#9CA3AF' }}
+                />
+                <YAxis 
+                  stroke={theme === 'light' ? '#64748b' : '#9CA3AF'}
+                  tick={{ fill: theme === 'light' ? '#64748b' : '#9CA3AF' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: theme === 'light' ? '#ffffff' : '#1F2937',
+                    border: 'none',
+                    borderRadius: '0.5rem',
+                    color: theme === 'light' ? '#1f2937' : '#fff'
+                  }}
+                  formatter={(value: number) => [`€${value.toLocaleString()}`, 'Volume']}
+                />
+                <Bar 
+                  dataKey="volume" 
+                  fill={theme === 'light' ? '#3B82F6' : '#60A5FA'}
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
         {/* Filters */}
         <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${getCardClasses()} p-6 rounded-lg mb-6`}>
           <div>
@@ -132,7 +230,7 @@ export default function TradesList() {
                   : 'bg-gray-700 text-white'
               } focus:outline-none focus:ring-2 focus:ring-sky-500`}
             >
-              <option value="">All Statuses</option>
+              <option value="">All Status</option>
               {statuses.map(status => (
                 <option key={status} value={status}>{status}</option>
               ))}
@@ -140,37 +238,7 @@ export default function TradesList() {
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className={`${getCardClasses()} p-4 rounded-lg`}>
-            <div className={theme === 'light' ? 'text-sky-900' : 'text-gray-400'}>Total Trades</div>
-            <div className={`text-2xl font-bold ${theme === 'light' ? 'text-sky-900' : 'text-white'}`}>
-              {filteredTrades.length}
-            </div>
-          </div>
-          <div className={`${getCardClasses()} p-4 rounded-lg`}>
-            <div className={theme === 'light' ? 'text-sky-900' : 'text-gray-400'}>Total Volume</div>
-            <div className={`text-2xl font-bold ${theme === 'light' ? 'text-sky-900' : 'text-white'}`}>
-              {filteredTrades.reduce((sum, trade) => sum + trade.lot, 0).toFixed(2)}
-            </div>
-          </div>
-          <div className={`${getCardClasses()} p-4 rounded-lg`}>
-            <div className={theme === 'light' ? 'text-sky-900' : 'text-gray-400'}>Status Distribution</div>
-            <div className="flex gap-2 mt-2">
-              {statuses.map(status => (
-                <span
-                  key={status}
-                  className={`px-2 py-1 rounded-full text-xs ${getStatusColor(status)}`}
-                >
-                  {status}: {filteredTrades.filter(t => t.status === status).length}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
         {/* Trades Table */}
-        
         <div className={`${getCardClasses()} rounded-lg overflow-hidden`}>
           {loading ? (
             <div className="p-6 text-center">Loading...</div>
