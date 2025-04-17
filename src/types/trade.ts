@@ -5,4 +5,5 @@ export interface Trade {
   device: string;
   status: string;
   lot: number;
+  balance: number | null;
 }

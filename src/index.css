@@ -13,16 +13,30 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #1f2937;
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4b5563;
+  background: var(--scrollbar-thumb);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* Light theme scrollbar */
+[data-theme="light"] {
+  --scrollbar-track: #f3f4f6;
+  --scrollbar-thumb: #e5e7eb;
+  --scrollbar-thumb-hover: #d1d5db;
+}
+
+/* Dark theme scrollbar */
+[data-theme="dark"] {
+  --scrollbar-track: #1f2937;
+  --scrollbar-thumb: #374151;
+  --scrollbar-thumb-hover: #4b5563;
 }
 
 /* TradingView Widget Styles */
@@ -47,4 +61,30 @@ body {
 .tradingview-widget-container__widget {
   height: calc(100% - 32px);
   width: 100%;
+}
+
+/* Light theme component styles */
+.theme-light {
+  --card-bg: #ffffff;
+  --card-border: #f3f4f6;
+  --table-header: #f9fafb;
+  --table-row-hover: #f3f4f6;
+  --input-bg: #ffffff;
+  --input-border: #e5e7eb;
+  --input-focus: #60a5fa;
+  --text-primary: #374151;
+  --text-secondary: #6b7280;
+}
+
+/* Dark theme component styles */
+.theme-dark {
+  --card-bg: #1f2937;
+  --card-border: #374151;
+  --table-header: #1f2937;
+  --table-row-hover: #2d3748;
+  --input-bg: #1f2937;
+  --input-border: #374151;
+  --input-focus: #60a5fa;
+  --text-primary: #f3f4f6;
+  --text-secondary: #9ca3af;
 }

@@ -10,6 +10,7 @@ export default function Trades() {
   const [selectedDevice, setSelectedDevice] = useState<string>('');
   const [clientId, setClientId] = useState<string>('');
   const [lot, setLot] = useState<number>(0);
+  const [balance, setBalance] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -68,7 +69,8 @@ export default function Trades() {
             client_id: clientId,
             device: 'web',
             status: 'pending',
-            lot: lot
+            lot: lot,
+            balance: balance
           }
         ]);
 
@@ -86,10 +88,22 @@ export default function Trades() {
     }
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'bg-green-500 bg-opacity-10 text-green-500';
+      case 'close':
+        return 'bg-red-500 bg-opacity-10 text-red-500';
+      default:
+        return 'bg-yellow-500 bg-opacity-10 text-yellow-500';
+    }
+  };
+
   const chartData = trades.map(trade => ({
     time: new Date(trade.created_at).toLocaleTimeString(),
     lot: trade.lot,
-    status: trade.status
+    status: trade.status,
+    balance: trade.balance
   }));
 
   return (
@@ -98,7 +112,7 @@ export default function Trades() {
         <h1 className="text-2xl font-bold mb-6">Trading Analysis</h1>
         
         {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-800 p-6 rounded-lg">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-gray-800 p-6 rounded-lg">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
               Device
@@ -125,6 +139,20 @@ export default function Trades() {
               onChange={(e) => setClientId(e.target.value)}
               className="w-full px-3 py-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter Client ID"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1">
+              Balance
+            </label>
+            <input
+              type="number"
+              value={balance || ''}
+              onChange={(e) => setBalance(Number(e.target.value))}
+              className="w-full px-3 py-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter Balance"
+              step="0.01"
             />
           </div>
 
@@ -212,6 +240,13 @@ export default function Trades() {
                   strokeWidth={2}
                   dot={{ fill: '#3B82F6' }}
                 />
+                <Line 
+                  type="monotone" 
+                  dataKey="balance" 
+                  stroke="#10B981" 
+                  strokeWidth={2}
+                  dot={{ fill: '#10B981' }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -242,6 +277,9 @@ export default function Trades() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Lot
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Balance
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700">
@@ -257,16 +295,15 @@ export default function Trades() {
                     {trade.device}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      trade.status === 'success' ? 'bg-green-500 bg-opacity-10 text-green-500' :
-                      trade.status === 'failed' ? 'bg-red-500 bg-opacity-10 text-red-500' :
-                      'bg-yellow-500 bg-opacity-10 text-yellow-500'
-                    }`}>
+                    <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(trade.status)}`}>
                       {trade.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {trade.lot}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {trade.balance !== null ? trade.balance.toFixed(2) : '-'}
                   </td>
                 </tr>
               ))}
