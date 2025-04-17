@@ -2,14 +2,34 @@ import { useEffect, useState } from 'react';
 import { Receipt, Euro, Calendar, Search, Pencil, Trash2, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Facture } from '../types/facture';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function Dashboard() {
+  const { theme } = useTheme();
   const [factures, setFactures] = useState<Facture[]>([]);
   const [filteredFactures, setFilteredFactures] = useState<Facture[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingFacture, setEditingFacture] = useState<Facture | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const getCardClasses = () => {
+    return theme === 'light'
+      ? 'bg-sky-50 shadow-lg'
+      : 'bg-gray-800';
+  };
+
+  const getTableHeaderClasses = () => {
+    return theme === 'light'
+      ? 'bg-sky-100'
+      : 'bg-gray-700';
+  };
+
+  const getTableRowHoverClasses = () => {
+    return theme === 'light'
+      ? 'hover:bg-sky-50'
+      : 'hover:bg-gray-700';
+  };
 
   useEffect(() => {
     fetchFactures();
@@ -112,43 +132,43 @@ export default function Dashboard() {
     <div className="p-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-gray-800 p-6 rounded-lg">
+        <div className={`${getCardClasses()} p-6 rounded-lg`}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400">Total Factures</p>
+              <p className={theme === 'light' ? 'text-sky-900' : 'text-gray-400'}>Total Factures</p>
               <p className="text-2xl font-bold">{filteredFactures.length}</p>
             </div>
-            <Receipt className="h-8 w-8 text-blue-400" />
+            <Receipt className={theme === 'light' ? 'h-8 w-8 text-sky-600' : 'h-8 w-8 text-blue-400'} />
           </div>
         </div>
 
-        <div className="bg-gray-800 p-6 rounded-lg">
+        <div className={`${getCardClasses()} p-6 rounded-lg`}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400">Montant Total</p>
+              <p className={theme === 'light' ? 'text-sky-900' : 'text-gray-400'}>Montant Total</p>
               <p className="text-2xl font-bold">
                 {filteredFactures.reduce((sum, f) => sum + f.prix, 0)}€
               </p>
             </div>
-            <Euro className="h-8 w-8 text-green-400" />
+            <Euro className={theme === 'light' ? 'h-8 w-8 text-green-600' : 'h-8 w-8 text-green-400'} />
           </div>
         </div>
 
-        <div className="bg-gray-800 p-6 rounded-lg">
+        <div className={`${getCardClasses()} p-6 rounded-lg`}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-400">Dernière Facture</p>
+              <p className={theme === 'light' ? 'text-sky-900' : 'text-gray-400'}>Dernière Facture</p>
               <p className="text-2xl font-bold">
                 {filteredFactures[0]?.created_at.split('T')[0] || '-'}
               </p>
             </div>
-            <Calendar className="h-8 w-8 text-purple-400" />
+            <Calendar className={theme === 'light' ? 'h-8 w-8 text-purple-600' : 'h-8 w-8 text-purple-400'} />
           </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-gray-800 rounded-lg overflow-hidden">
+      <div className={`${getCardClasses()} rounded-lg overflow-hidden`}>
         <div className="p-6">
           <h2 className="text-xl font-bold mb-4">Liste des Factures</h2>
           
@@ -160,7 +180,11 @@ export default function Dashboard() {
               placeholder="Rechercher..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full pl-10 pr-4 py-2 ${
+                theme === 'light'
+                  ? 'bg-white border border-sky-200 text-sky-900 placeholder-sky-400'
+                  : 'bg-gray-700 text-white placeholder-gray-400'
+              } rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500`}
             />
           </div>
         </div>
@@ -169,31 +193,31 @@ export default function Dashboard() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-700">
+              <thead className={getTableHeaderClasses()}>
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     N° Facture
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Nom
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Article
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Prix
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-700">
+              <tbody className="divide-y divide-gray-200">
                 {filteredFactures.map((facture) => (
-                  <tr key={facture.id} className="hover:bg-gray-700">
+                  <tr key={facture.id} className={getTableRowHoverClasses()}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {facture.n_facture}
                     </td>
@@ -216,7 +240,11 @@ export default function Dashboard() {
                             setEditingFacture(facture);
                             setIsModalOpen(true);
                           }}
-                          className="p-1 text-blue-400 hover:text-blue-300 transition-colors"
+                          className={`p-1 ${
+                            theme === 'light'
+                              ? 'text-sky-600 hover:text-sky-700'
+                              : 'text-blue-400 hover:text-blue-300'
+                          } transition-colors`}
                         >
                           <Pencil className="h-5 w-5" />
                         </button>
@@ -239,7 +267,7 @@ export default function Dashboard() {
       {/* Edit Modal */}
       {isModalOpen && editingFacture && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md">
+          <div className={`${getCardClasses()} rounded-lg p-6 w-full max-w-md`}>
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-bold">Modifier la Facture</h3>
               <button
@@ -247,14 +275,14 @@ export default function Dashboard() {
                   setIsModalOpen(false);
                   setEditingFacture(null);
                 }}
-                className="text-gray-400 hover:text-gray-300"
+                className={theme === 'light' ? 'text-sky-600 hover:text-sky-700' : 'text-gray-400 hover:text-gray-300'}
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
             <form onSubmit={handleUpdate} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className={`block text-sm font-medium ${theme === 'light' ? 'text-sky-900' : 'text-gray-300'} mb-1`}>
                   N° Facture
                 </label>
                 <input
@@ -264,11 +292,15 @@ export default function Dashboard() {
                     ...editingFacture,
                     n_facture: e.target.value
                   })}
-                  className="w-full px-3 py-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 rounded-lg ${
+                    theme === 'light'
+                      ? 'bg-white border border-sky-200 text-sky-900'
+                      : 'bg-gray-700 text-white'
+                  } focus:outline-none focus:ring-2 focus:ring-sky-500`}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className={`block text-sm font-medium ${theme === 'light' ? 'text-sky-900' : 'text-gray-300'} mb-1`}>
                   Nom
                 </label>
                 <input
@@ -278,11 +310,15 @@ export default function Dashboard() {
                     ...editingFacture,
                     nom: e.target.value
                   })}
-                  className="w-full px-3 py-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 rounded-lg ${
+                    theme === 'light'
+                      ? 'bg-white border border-sky-200 text-sky-900'
+                      : 'bg-gray-700 text-white'
+                  } focus:outline-none focus:ring-2 focus:ring-sky-500`}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className={`block text-sm font-medium ${theme === 'light' ? 'text-sky-900' : 'text-gray-300'} mb-1`}>
                   Article
                 </label>
                 <input
@@ -292,11 +328,15 @@ export default function Dashboard() {
                     ...editingFacture,
                     article: e.target.value
                   })}
-                  className="w-full px-3 py-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 rounded-lg ${
+                    theme === 'light'
+                      ? 'bg-white border border-sky-200 text-sky-900'
+                      : 'bg-gray-700 text-white'
+                  } focus:outline-none focus:ring-2 focus:ring-sky-500`}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className={`block text-sm font-medium ${theme === 'light' ? 'text-sky-900' : 'text-gray-300'} mb-1`}>
                   Prix (€)
                 </label>
                 <input
@@ -306,7 +346,11 @@ export default function Dashboard() {
                     ...editingFacture,
                     prix: Number(e.target.value)
                   })}
-                  className="w-full px-3 py-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 rounded-lg ${
+                    theme === 'light'
+                      ? 'bg-white border border-sky-200 text-sky-900'
+                      : 'bg-gray-700 text-white'
+                  } focus:outline-none focus:ring-2 focus:ring-sky-500`}
                 />
               </div>
               <div className="flex justify-end space-x-3 mt-6">
@@ -316,13 +360,21 @@ export default function Dashboard() {
                     setIsModalOpen(false);
                     setEditingFacture(null);
                   }}
-                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors"
+                  className={`px-4 py-2 rounded-lg ${
+                    theme === 'light'
+                      ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      : 'bg-gray-600 text-white hover:bg-gray-500'
+                  } transition-colors`}
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-400 transition-colors"
+                  className={`px-4 py-2 rounded-lg ${
+                    theme === 'light'
+                      ? 'bg-sky-500 text-white hover:bg-sky-600'
+                      : 'bg-blue-500 text-white hover:bg-blue-400'
+                  } transition-colors`}
                 >
                   Sauvegarder
                 </button>

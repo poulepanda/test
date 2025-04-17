@@ -27,9 +27,9 @@ body {
 
 /* Light theme scrollbar */
 [data-theme="light"] {
-  --scrollbar-track: #f3f4f6;
-  --scrollbar-thumb: #e5e7eb;
-  --scrollbar-thumb-hover: #d1d5db;
+  --scrollbar-track: #eff6ff;
+  --scrollbar-thumb: #bfdbfe;
+  --scrollbar-thumb-hover: #93c5fd;
 }
 
 /* Dark theme scrollbar */
@@ -65,15 +65,15 @@ body {
 
 /* Light theme component styles */
 .theme-light {
-  --card-bg: #ffffff;
-  --card-border: #f3f4f6;
-  --table-header: #f9fafb;
-  --table-row-hover: #f3f4f6;
+  --card-bg: #f0f9ff;
+  --card-border: #bae6fd;
+  --table-header: #e0f2fe;
+  --table-row-hover: #bae6fd;
   --input-bg: #ffffff;
-  --input-border: #e5e7eb;
-  --input-focus: #60a5fa;
-  --text-primary: #374151;
-  --text-secondary: #6b7280;
+  --input-border: #7dd3fc;
+  --input-focus: #0ea5e9;
+  --text-primary: #0c4a6e;
+  --text-secondary: #0284c7;
 }
 
 /* Dark theme component styles */
@@ -87,4 +87,34 @@ body {
   --input-focus: #60a5fa;
   --text-primary: #f3f4f6;
   --text-secondary: #9ca3af;
+}
+
+/* Shooting stars animation */
+@keyframes shoot {
+  0% {
+    transform: translate(0, 0) rotate(45deg) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  20% {
+    transform: translate(200px, 200px) rotate(45deg) scale(1);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(200px, 200px) rotate(45deg) scale(1);
+    opacity: 0;
+  }
+}
+
+.shooting-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.1),
+              0 0 0 8px rgba(255,255,255,0.1);
+  animation: shoot linear infinite;
 }

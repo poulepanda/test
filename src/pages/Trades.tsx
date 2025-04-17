@@ -3,8 +3,10 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { supabase } from '../lib/supabase';
 import type { Trade } from '../types/trade';
 import TradingViewWidget from '../components/TradingViewWidget';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function Trades() {
+  const { theme } = useTheme();
   const [trades, setTrades] = useState<Trade[]>([]);
   const [devices, setDevices] = useState<string[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<string>('');
@@ -14,6 +16,12 @@ export default function Trades() {
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const getCardClasses = () => {
+    return theme === 'light'
+      ? 'bg-sky-50 shadow-lg'
+      : 'bg-gray-800';
+  };
 
   useEffect(() => {
     fetchTrades();
@@ -91,11 +99,11 @@ export default function Trades() {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'pending':
-        return 'bg-green-500 bg-opacity-10 text-green-500';
+        return theme === 'light' ? 'bg-green-100 text-green-800' : 'bg-green-500 bg-opacity-10 text-green-500';
       case 'close':
-        return 'bg-red-500 bg-opacity-10 text-red-500';
+        return theme === 'light' ? 'bg-red-100 text-red-800' : 'bg-red-500 bg-opacity-10 text-red-500';
       default:
-        return 'bg-yellow-500 bg-opacity-10 text-yellow-500';
+        return theme === 'light' ? 'bg-yellow-100 text-yellow-800' : 'bg-yellow-500 bg-opacity-10 text-yellow-500';
     }
   };
 
@@ -109,18 +117,24 @@ export default function Trades() {
   return (
     <div className="p-6">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-6">Trading Analysis</h1>
+        <h1 className={`text-2xl font-bold mb-6 ${theme === 'light' ? 'text-sky-900' : 'text-white'}`}>
+          Trading Analysis
+        </h1>
         
         {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-gray-800 p-6 rounded-lg">
+        <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 ${getCardClasses()} p-6 rounded-lg`}>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
+            <label className={`block text-sm font-medium ${theme === 'light' ? 'text-sky-900' : 'text-gray-300'} mb-1`}>
               Device
             </label>
             <select
               value={selectedDevice}
               onChange={(e) => setSelectedDevice(e.target.value)}
-              className="w-full px-3 py-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 rounded-lg ${
+                theme === 'light'
+                  ? 'bg-white border border-sky-200 text-sky-900'
+                  : 'bg-gray-700 text-white'
+              } focus:outline-none focus:ring-2 focus:ring-sky-500`}
             >
               <option value="">All Devices</option>
               {devices.map(device => (
@@ -130,34 +144,42 @@ export default function Trades() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
+            <label className={`block text-sm font-medium ${theme === 'light' ? 'text-sky-900' : 'text-gray-300'} mb-1`}>
               Client ID
             </label>
             <input
               type="text"
               value={clientId}
               onChange={(e) => setClientId(e.target.value)}
-              className="w-full px-3 py-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 rounded-lg ${
+                theme === 'light'
+                  ? 'bg-white border border-sky-200 text-sky-900 placeholder-sky-400'
+                  : 'bg-gray-700 text-white placeholder-gray-400'
+              } focus:outline-none focus:ring-2 focus:ring-sky-500`}
               placeholder="Enter Client ID"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
+            <label className={`block text-sm font-medium ${theme === 'light' ? 'text-sky-900' : 'text-gray-300'} mb-1`}>
               Balance
             </label>
             <input
               type="number"
               value={balance || ''}
               onChange={(e) => setBalance(Number(e.target.value))}
-              className="w-full px-3 py-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 rounded-lg ${
+                theme === 'light'
+                  ? 'bg-white border border-sky-200 text-sky-900 placeholder-sky-400'
+                  : 'bg-gray-700 text-white placeholder-gray-400'
+              } focus:outline-none focus:ring-2 focus:ring-sky-500`}
               placeholder="Enter Balance"
               step="0.01"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
+            <label className={`block text-sm font-medium ${theme === 'light' ? 'text-sky-900' : 'text-gray-300'} mb-1`}>
               Lot Size
             </label>
             <div className="flex gap-2">
@@ -165,7 +187,11 @@ export default function Trades() {
                 type="number"
                 value={lot || ''}
                 onChange={(e) => setLot(Number(e.target.value))}
-                className="flex-1 px-3 py-2 bg-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`flex-1 px-3 py-2 rounded-lg ${
+                  theme === 'light'
+                    ? 'bg-white border border-sky-200 text-sky-900 placeholder-sky-400'
+                    : 'bg-gray-700 text-white placeholder-gray-400'
+                } focus:outline-none focus:ring-2 focus:ring-sky-500`}
                 placeholder="Enter Lot Size"
                 min="0"
                 step="0.01"
@@ -184,8 +210,13 @@ export default function Trades() {
                 <button
                   onClick={saveTrade}
                   disabled={saveLoading}
-                  className={`px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors whitespace-nowrap
-                    ${saveLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`px-4 py-2 rounded-lg ${
+                    theme === 'light'
+                      ? 'bg-sky-500 text-white hover:bg-sky-600'
+                      : 'bg-blue-500 text-white hover:bg-blue-400'
+                  } transition-colors whitespace-nowrap ${
+                    saveLoading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 >
                   {saveLoading ? 'Saving...' : 'Save Trade'}
                 </button>
@@ -196,16 +227,20 @@ export default function Trades() {
       </div>
 
       {/* TradingView Widget */}
-      <div className="bg-gray-800 p-6 rounded-lg mb-8">
-        <h2 className="text-xl font-bold mb-4">Market Chart</h2>
+      <div className={`${getCardClasses()} p-6 rounded-lg mb-8`}>
+        <h2 className={`text-xl font-bold mb-4 ${theme === 'light' ? 'text-sky-900' : 'text-white'}`}>
+          Market Chart
+        </h2>
         <div className="h-[600px] w-full">
           <TradingViewWidget />
         </div>
       </div>
 
       {/* Trading Performance Chart */}
-      <div className="bg-gray-800 p-6 rounded-lg">
-        <h2 className="text-xl font-bold mb-4">Trading Performance</h2>
+      <div className={`${getCardClasses()} p-6 rounded-lg`}>
+        <h2 className={`text-xl font-bold mb-4 ${theme === 'light' ? 'text-sky-900' : 'text-white'}`}>
+          Trading Performance
+        </h2>
         {loading ? (
           <div className="text-center py-12">Loading...</div>
         ) : trades.length === 0 ? (
@@ -214,38 +249,41 @@ export default function Trades() {
           <div className="h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <CartesianGrid 
+                  strokeDasharray="3 3" 
+                  stroke={theme === 'light' ? '#e2e8f0' : '#374151'} 
+                />
                 <XAxis 
                   dataKey="time" 
-                  stroke="#9CA3AF"
-                  tick={{ fill: '#9CA3AF' }}
+                  stroke={theme === 'light' ? '#64748b' : '#9CA3AF'}
+                  tick={{ fill: theme === 'light' ? '#64748b' : '#9CA3AF' }}
                 />
                 <YAxis 
-                  stroke="#9CA3AF"
-                  tick={{ fill: '#9CA3AF' }}
+                  stroke={theme === 'light' ? '#64748b' : '#9CA3AF'}
+                  tick={{ fill: theme === 'light' ? '#64748b' : '#9CA3AF' }}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#1F2937',
+                    backgroundColor: theme === 'light' ? '#ffffff' : '#1F2937',
                     border: 'none',
                     borderRadius: '0.5rem',
-                    color: '#fff'
+                    color: theme === 'light' ? '#1f2937' : '#fff'
                   }}
                 />
                 <Legend />
                 <Line 
                   type="monotone" 
                   dataKey="lot" 
-                  stroke="#3B82F6" 
+                  stroke={theme === 'light' ? '#0284c7' : '#3B82F6'} 
                   strokeWidth={2}
-                  dot={{ fill: '#3B82F6' }}
+                  dot={{ fill: theme === 'light' ? '#0284c7' : '#3B82F6' }}
                 />
                 <Line 
                   type="monotone" 
                   dataKey="balance" 
-                  stroke="#10B981" 
+                  stroke={theme === 'light' ? '#059669' : '#10B981'} 
                   strokeWidth={2}
-                  dot={{ fill: '#10B981' }}
+                  dot={{ fill: theme === 'light' ? '#059669' : '#10B981' }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -254,44 +292,64 @@ export default function Trades() {
       </div>
 
       {/* Trades Table */}
-      <div className="mt-8 bg-gray-800 rounded-lg overflow-hidden">
+      <div className={`mt-8 ${getCardClasses()} rounded-lg overflow-hidden`}>
         <div className="p-6">
-          <h2 className="text-xl font-bold mb-4">Recent Trades</h2>
+          <h2 className={`text-xl font-bold mb-4 ${theme === 'light' ? 'text-sky-900' : 'text-white'}`}>
+            Recent Trades
+          </h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-700">
+            <thead className={theme === 'light' ? 'bg-sky-100' : 'bg-gray-700'}>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                <th className={`px-6 py-3 text-left text-xs font-medium ${
+                  theme === 'light' ? 'text-sky-900' : 'text-gray-300'
+                } uppercase tracking-wider`}>
                   Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                <th className={`px-6 py-3 text-left text-xs font-medium ${
+                  theme === 'light' ? 'text-sky-900' : 'text-gray-300'
+                } uppercase tracking-wider`}>
                   Client ID
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                <th className={`px-6 py-3 text-left text-xs font-medium ${
+                  theme === 'light' ? 'text-sky-900' : 'text-gray-300'
+                } uppercase tracking-wider`}>
                   Device
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                <th className={`px-6 py-3 text-left text-xs font-medium ${
+                  theme === 'light' ? 'text-sky-900' : 'text-gray-300'
+                } uppercase tracking-wider`}>
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                <th className={`px-6 py-3 text-left text-xs font-medium ${
+                  theme === 'light' ? 'text-sky-900' : 'text-gray-300'
+                } uppercase tracking-wider`}>
                   Lot
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                <th className={`px-6 py-3 text-left text-xs font-medium ${
+                  theme === 'light' ? 'text-sky-900' : 'text-gray-300'
+                } uppercase tracking-wider`}>
                   Balance
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-700">
+            <tbody className={`divide-y ${theme === 'light' ? 'divide-sky-200' : 'divide-gray-700'}`}>
               {trades.map((trade) => (
-                <tr key={trade.id} className="hover:bg-gray-700">
-                  <td className="px-6 py-4 whitespace-nowrap">
+                <tr key={trade.id} className={theme === 'light' ? 'hover:bg-sky-50' : 'hover:bg-gray-700'}>
+                  <td className={`px-6 py-4 whitespace-nowrap ${
+                    theme === 'light' ? 'text-sky-900' : 'text-white'
+                  }`}>
                     {new Date(trade.created_at).toLocaleString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className={`px-6 py-4 whitespace-nowrap ${
+                    theme === 'light' ? 'text-sky-900' : 'text-white'
+                  }`}>
                     {trade.client_id}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className={`px-6 py-4 whitespace-nowrap ${
+                    theme === 'light' ? 'text-sky-900' : 'text-white'
+                  }`}>
                     {trade.device}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -299,10 +357,14 @@ export default function Trades() {
                       {trade.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className={`px-6 py-4 whitespace-nowrap ${
+                    theme === 'light' ? 'text-sky-900' : 'text-white'
+                  }`}>
                     {trade.lot}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className={`px-6 py-4 whitespace-nowrap ${
+                    theme === 'light' ? 'text-sky-900' : 'text-white'
+                  }`}>
                     {trade.balance !== null ? trade.balance.toFixed(2) : '-'}
                   </td>
                 </tr>
