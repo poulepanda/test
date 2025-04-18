@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Site from './pages/Site';
 import Trades from './pages/Trades';
 import TradesList from './pages/TradesList';
+import BBChat from './pages/BBChat';
 import SignIn from './pages/SignIn';
 import { useTheme } from './contexts/ThemeContext';
 
@@ -71,6 +72,19 @@ function AppContent() {
                 <Sidebar />
                 <div className="flex-1 md:ml-64 w-full">
                   <TradesList />
+                </div>
+              </div>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/bbchat"
+          element={
+            <ProtectedRoute>
+              <div className="flex flex-col md:flex-row">
+                <Sidebar />
+                <div className="flex-1 md:ml-64 w-full">
+                  <BBChat />
                 </div>
               </div>
             </ProtectedRoute>

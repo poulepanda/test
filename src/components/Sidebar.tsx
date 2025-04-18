@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, Globe, LineChart, List, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Globe, LineChart, List, LogOut, Menu, X, MessageSquare } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -96,6 +96,14 @@ export default function Sidebar() {
               >
                 <List className="h-5 w-5" />
                 <span>Trades List</span>
+              </NavLink>
+              <NavLink
+                to="/bbchat"
+                className={({ isActive }) => getLinkClasses(isActive)}
+                onClick={() => setIsOpen(false)}
+              >
+                <MessageSquare className="h-5 w-5" />
+                <span>BBChat</span>
               </NavLink>
             </nav>
           </div>
