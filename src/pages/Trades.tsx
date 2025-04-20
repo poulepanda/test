@@ -11,12 +11,7 @@ const tradeCards = [
   { title: "Forex Exchange", description: "Global currency pair trading with competitive spreads", image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=500" },
   { title: "Stock Market", description: "Access to major global stock exchanges", image: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=500" },
   { title: "Commodities", description: "Trade gold, silver, oil and other commodities", image: "https://images.unsplash.com/photo-1610375461246-83df859d849d?w=500" },
-  { title: "Options Trading", description: "Advanced options trading strategies", image: "https://images.unsplash.com/photo-1559526324-593bc073d938?w=500" },
-  { title: "Technical Analysis", description: "Comprehensive charting and analysis tools", image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500" },
-  { title: "Portfolio Management", description: "Diversified investment portfolio solutions", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500" },
-  { title: "Risk Management", description: "Advanced risk management tools and strategies", image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=500" },
-  { title: "Market Research", description: "In-depth market analysis and research", image: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=500" },
-  { title: "Trading Education", description: "Comprehensive trading education resources", image: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=500" }
+  { title: "Options Trading", description: "Advanced options trading strategies", image: "https://images.unsplash.com/photo-1559526324-593bc073d938?w=500" }
 ];
 
 export default function Trades() {
@@ -32,6 +27,8 @@ export default function Trades() {
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [stopLoss, setStopLoss] = useState<number>(50);
+  const [takeProfit, setTakeProfit] = useState<number>(12.5);
 
   const getCardClasses = () => {
     return theme === 'light'
@@ -46,7 +43,9 @@ export default function Trades() {
   // Auto-scroll carousel
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentCardIndex((prevIndex) => (prevIndex + 1) % (tradeCards.length - 4));
+      setCurrentCardIndex((prevIndex) => 
+        prevIndex >= tradeCards.length - 3 ? 0 : prevIndex + 1
+      );
     }, 3000);
 
     return () => clearInterval(interval);
@@ -55,7 +54,7 @@ export default function Trades() {
   // Update carousel position when currentCardIndex changes
   useEffect(() => {
     if (carouselRef.current) {
-      carouselRef.current.style.transform = `translateX(-${currentCardIndex * 20}%)`;
+      carouselRef.current.style.transform = `translateX(-${currentCardIndex * (100 / 3)}%)`;
     }
   }, [currentCardIndex]);
 
@@ -92,7 +91,7 @@ export default function Trades() {
     }
   }
 
-  const saveTrade = async () => {
+  const saveTrade = async (type: 'buy' | 'sell') => {
     if (!lot || !clientId) {
       alert('Please enter both Client ID and Lot Size');
       return;
@@ -108,7 +107,7 @@ export default function Trades() {
           {
             client_id: clientId,
             device: 'web',
-            status: 'pending',
+            status: type,
             lot: lot,
             balance: balance
           }
@@ -130,13 +129,27 @@ export default function Trades() {
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'pending':
-        return theme === 'light' ? 'bg-green-100 text-green-800' : 'bg-green-500 bg-opacity-10 text-green-500';
-      case 'close':
-        return theme === 'light' ? 'bg-red-100 text-red-800' : 'bg-red-500 bg-opacity-10 text-red-500';
+      case 'buy':
+        return theme === 'light' 
+          ? 'bg-indigo-100 text-indigo-800' 
+          : 'bg-indigo-500 bg-opacity-10 text-indigo-400';
+      case 'sell':
+        return theme === 'light' 
+          ? 'bg-amber-100 text-amber-800' 
+          : 'bg-amber-500 bg-opacity-10 text-amber-400';
       default:
-        return theme === 'light' ? 'bg-yellow-100 text-yellow-800' : 'bg-yellow-500 bg-opacity-10 text-yellow-500';
+        return theme === 'light' 
+          ? 'bg-gray-100 text-gray-800' 
+          : 'bg-gray-500 bg-opacity-10 text-gray-400';
     }
+  };
+
+  const getBalanceColor = (balance: number | null) => {
+    if (balance === null) return '';
+    if (theme === 'light') {
+      return balance < 0 ? 'text-red-600' : 'text-green-600';
+    }
+    return balance < 0 ? 'text-red-500' : 'text-green-500';
   };
 
   const chartData = trades.map(trade => ({
@@ -147,28 +160,28 @@ export default function Trades() {
   }));
 
   return (
-    <div className="p-6">
+    <div className="p-6 max-w-full overflow-x-hidden">
       <div className="mb-8">
         <h1 className={`text-2xl font-bold mb-6 ${theme === 'light' ? 'text-sky-900' : 'text-white'}`}>
           Trading Analysis
         </h1>
 
-        
         {/* Trading Cards Carousel */}
-        <div className={`${getCardClasses()} p-6 rounded-lg mb-6 overflow-hidden`}>
+        <div className={`${getCardClasses()} p-6 rounded-lg mb-6`}>
           <h2 className={`text-xl font-bold mb-6 ${theme === 'light' ? 'text-sky-900' : 'text-white'}`}>
             Trading Services
           </h2>
-          <div className="relative">
+          <div className="relative overflow-hidden">
             <div
               ref={carouselRef}
               className="flex transition-transform duration-500 ease-in-out"
-              style={{ width: '200%' }}
+              style={{ width: `${(tradeCards.length * 100) / 3}%` }}
             >
               {tradeCards.map((card, index) => (
                 <div
                   key={index}
-                  className="w-1/5 px-2 flex-shrink-0"
+                  className="px-2"
+                  style={{ width: `${100 / tradeCards.length}%` }}
                 >
                   <div className={`${getCardClasses()} rounded-lg overflow-hidden h-full`}>
                     <img
@@ -192,111 +205,82 @@ export default function Trades() {
             </div>
           </div>
         </div>
-        
-        {/* Filters */}
-        <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 ${getCardClasses()} p-6 rounded-lg mb-6`}>
-          <div>
-            <label className={`block text-sm font-medium ${theme === 'light' ? 'text-sky-900' : 'text-gray-300'} mb-1`}>
-              Device
-            </label>
-            <select
-              value={selectedDevice}
-              onChange={(e) => setSelectedDevice(e.target.value)}
-              className={`w-full px-3 py-2 rounded-lg ${
-                theme === 'light'
-                  ? 'bg-white border border-sky-200 text-sky-900'
-                  : 'bg-gray-700 text-white'
-              } focus:outline-none focus:ring-2 focus:ring-sky-500`}
-            >
-              <option value="">All Devices</option>
-              {devices.map(device => (
-                <option key={device} value={device}>{device}</option>
-              ))}
-            </select>
-          </div>
 
-          <div>
-            <label className={`block text-sm font-medium ${theme === 'light' ? 'text-sky-900' : 'text-gray-300'} mb-1`}>
-              Client ID
-            </label>
-            <input
-              type="text"
-              value={clientId}
-              onChange={(e) => setClientId(e.target.value)}
-              className={`w-full px-3 py-2 rounded-lg ${
-                theme === 'light'
-                  ? 'bg-white border border-sky-200 text-sky-900 placeholder-sky-400'
-                  : 'bg-gray-700 text-white placeholder-gray-400'
-              } focus:outline-none focus:ring-2 focus:ring-sky-500`}
-              placeholder="Enter Client ID"
-            />
-          </div>
+        {/* Trading Interface */}
+        <div className={`${getCardClasses()} p-6 rounded-lg mb-6`}>
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            {/* Stop Loss */}
+            <div className="bg-black bg-opacity-80 rounded-lg p-4">
+              <div className="flex items-center justify-between text-white mb-2">
+                <span>STOP LOSS</span>
+                <div className="flex items-center space-x-2">
+                  <button 
+                    onClick={() => setStopLoss(prev => Math.max(0, prev - 5))}
+                    className="bg-green-900 hover:bg-green-800 px-3 py-1 rounded"
+                  >
+                    -
+                  </button>
+                  <span className="text-green-500 min-w-[60px] text-center">${stopLoss}</span>
+                  <button 
+                    onClick={() => setStopLoss(prev => prev + 5)}
+                    className="bg-green-900 hover:bg-green-800 px-3 py-1 rounded"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
 
-          <div>
-            <label className={`block text-sm font-medium ${theme === 'light' ? 'text-sky-900' : 'text-gray-300'} mb-1`}>
-              Balance
-            </label>
-            <input
-              type="number"
-              value={balance || ''}
-              onChange={(e) => setBalance(Number(e.target.value))}
-              className={`w-full px-3 py-2 rounded-lg ${
-                theme === 'light'
-                  ? 'bg-white border border-sky-200 text-sky-900 placeholder-sky-400'
-                  : 'bg-gray-700 text-white placeholder-gray-400'
-              } focus:outline-none focus:ring-2 focus:ring-sky-500`}
-              placeholder="Enter Balance"
-              step="0.01"
-            />
-          </div>
-
-          <div>
-            <label className={`block text-sm font-medium ${theme === 'light' ? 'text-sky-900' : 'text-gray-300'} mb-1`}>
-              Lot Size
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="number"
-                value={lot || ''}
-                onChange={(e) => setLot(Number(e.target.value))}
-                className={`flex-1 px-3 py-2 rounded-lg ${
-                  theme === 'light'
-                    ? 'bg-white border border-sky-200 text-sky-900 placeholder-sky-400'
-                    : 'bg-gray-700 text-white placeholder-gray-400'
-                } focus:outline-none focus:ring-2 focus:ring-sky-500`}
-                placeholder="Enter Lot Size"
-                min="0"
-                step="0.01"
-              />
-              <div className="flex items-center gap-2">
-                {status === 'success' && (
-                  <span className="bg-green-500 bg-opacity-10 text-green-500 px-3 py-1 rounded-md text-sm whitespace-nowrap">
-                    Trade saved!
-                  </span>
-                )}
-                {status === 'error' && (
-                  <span className="bg-red-500 bg-opacity-10 text-red-500 px-3 py-1 rounded-md text-sm whitespace-nowrap">
-                    Error saving trade
-                  </span>
-                )}
-                <button
-                  onClick={saveTrade}
-                  disabled={saveLoading}
-                  className={`px-4 py-2 rounded-lg ${
-                    theme === 'light'
-                      ? 'bg-sky-500 text-white hover:bg-sky-600'
-                      : 'bg-blue-500 text-white hover:bg-blue-400'
-                  } transition-colors whitespace-nowrap ${
-                    saveLoading ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
-                >
-                  {saveLoading ? 'Saving...' : 'Save Trade'}
-                </button>
+            {/* Take Profit */}
+            <div className="bg-black bg-opacity-80 rounded-lg p-4">
+              <div className="flex items-center justify-between text-white mb-2">
+                <span>TAKE PROFIT</span>
+                <div className="flex items-center space-x-2">
+                  <button 
+                    onClick={() => setTakeProfit(prev => Math.max(0, prev - 2.5))}
+                    className="bg-green-900 hover:bg-green-800 px-3 py-1 rounded"
+                  >
+                    -
+                  </button>
+                  <span className="text-green-500 min-w-[60px] text-center">${takeProfit}</span>
+                  <button 
+                    onClick={() => setTakeProfit(prev => prev + 2.5)}
+                    className="bg-green-900 hover:bg-green-800 px-3 py-1 rounded"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
+          {/* Price Display */}
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="bg-black bg-opacity-80 rounded-lg p-4">
+              <div className="text-green-500 text-2xl font-bold mb-1">0.97241</div>
+              <div className="text-white">$62.5</div>
+              <div className="mt-2 text-green-500">+25%</div>
+              <button 
+                onClick={() => saveTrade('buy')}
+                className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold"
+              >
+                BUY
+              </button>
+            </div>
+
+            <div className="bg-black bg-opacity-80 rounded-lg p-4">
+              <div className="text-red-500 text-2xl font-bold mb-1">0.93691</div>
+              <div className="text-white">$62.5</div>
+              <div className="mt-2 text-red-500">-25%</div>
+              <button 
+                onClick={() => saveTrade('sell')}
+                className="w-full mt-4 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold"
+              >
+                SELL
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* TradingView Widget */}
         <div className={`${getCardClasses()} p-6 rounded-lg mb-8`}>
@@ -434,9 +418,7 @@ export default function Trades() {
                     }`}>
                       {trade.lot}
                     </td>
-                    <td className={`px-6 py-4 whitespace-nowrap ${
-                      theme === 'light' ? 'text-sky-900' : 'text-white'
-                    }`}>
+                    <td className={`px-6 py-4 whitespace-nowrap font-medium ${getBalanceColor(trade.balance)}`}>
                       {trade.balance !== null ? trade.balance.toFixed(2) : '-'}
                     </td>
                   </tr>
