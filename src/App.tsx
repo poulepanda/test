@@ -29,7 +29,7 @@ function AppContent() {
   return (
     <div className={`min-h-screen flex flex-col ${getThemeClasses()}`}>
       <Routes>
-        <Route path="/" element={<Navigate to="/signin" replace />} />
+        <Route path="/" element={<SignIn />} />
         <Route path="/signin" element={<SignIn />} />
         <Route
           path="/dashboard"
