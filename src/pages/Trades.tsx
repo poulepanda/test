@@ -262,7 +262,8 @@ export default function Trades() {
               <div className="mt-2 text-green-500">+25%</div>
               <button 
                 onClick={() => saveTrade('buy')}
-                className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold"
+                disabled={true}
+                className="w-full mt-4 bg-green-600 opacity-50 cursor-not-allowed text-white py-3 rounded-lg font-bold"
               >
                 BUY
               </button>
@@ -274,7 +275,8 @@ export default function Trades() {
               <div className="mt-2 text-red-500">-25%</div>
               <button 
                 onClick={() => saveTrade('sell')}
-                className="w-full mt-4 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold"
+                disabled={true}
+                className="w-full mt-4 bg-red-600 opacity-50 cursor-not-allowed text-white py-3 rounded-lg font-bold"
               >
                 SELL
               </button>

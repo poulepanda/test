@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, Globe, LineChart, List, LogOut, Menu, X, MessageSquare, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
+import { Globe, LineChart, List, LogOut, Menu, X, ChevronLeft, ChevronRight, Users, BookOpen } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -112,19 +112,19 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
                 to="/dashboard"
                 className={({ isActive }) => getLinkClasses(isActive)}
                 onClick={() => setIsOpen(false)}
-                title="Dashboard"
-              >
-                <LayoutDashboard className="h-5 w-5 shrink-0" />
-                {!isCollapsed && <span>Dashboard</span>}
-              </NavLink>
-              <NavLink
-                to="/about-trading"
-                className={({ isActive }) => getLinkClasses(isActive)}
-                onClick={() => setIsOpen(false)}
                 title="About Trading"
               >
                 <BookOpen className="h-5 w-5 shrink-0" />
                 {!isCollapsed && <span>About Trading</span>}
+              </NavLink>
+              <NavLink
+                to="/users"
+                className={({ isActive }) => getLinkClasses(isActive)}
+                onClick={() => setIsOpen(false)}
+                title="Users"
+              >
+                <Users className="h-5 w-5 shrink-0" />
+                {!isCollapsed && <span>Users</span>}
               </NavLink>
               <NavLink
                 to="/site"
@@ -133,7 +133,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
                 title="Site"
               >
                 <Globe className="h-5 w-5 shrink-0" />
-                {!isCollapsed && <span>Site</span>}
+                {!isCollapsed && <span>Form</span>}
               </NavLink>
               <NavLink
                 to="/trades"
@@ -152,15 +152,6 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
               >
                 <List className="h-5 w-5 shrink-0" />
                 {!isCollapsed && <span>Trades List</span>}
-              </NavLink>
-              <NavLink
-                to="/bbchat"
-                className={({ isActive }) => getLinkClasses(isActive)}
-                onClick={() => setIsOpen(false)}
-                title="BBChat"
-              >
-                <MessageSquare className="h-5 w-5 shrink-0" />
-                {!isCollapsed && <span>BBChat</span>}
               </NavLink>
             </nav>
           </div>

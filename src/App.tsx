@@ -3,11 +3,10 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Sidebar from './components/Sidebar';
-import Dashboard from './pages/Dashboard';
 import Site from './pages/Site';
 import Trades from './pages/Trades';
 import TradesList from './pages/TradesList';
-import BBChat from './pages/BBChat';
+import Users from './pages/Users';
 import AboutTrading from './pages/AboutTrading';
 import SignIn from './pages/SignIn';
 import { useTheme } from './contexts/ThemeContext';
@@ -33,13 +32,26 @@ function AppContent() {
         <Route path="/" element={<Navigate to="/signin" replace />} />
         <Route path="/signin" element={<SignIn />} />
         <Route
-          path="/dashboard/*"
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <div className="flex flex-col md:flex-row min-h-screen">
                 <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
                 <div className={getLayoutClasses(isCollapsed)}>
-                  <Dashboard />
+                  <AboutTrading />
+                </div>
+              </div>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <div className="flex flex-col md:flex-row min-h-screen">
+                <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+                <div className={getLayoutClasses(isCollapsed)}>
+                  <Users />
                 </div>
               </div>
             </ProtectedRoute>
@@ -79,32 +91,6 @@ function AppContent() {
                 <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
                 <div className={getLayoutClasses(isCollapsed)}>
                   <TradesList />
-                </div>
-              </div>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/bbchat"
-          element={
-            <ProtectedRoute>
-              <div className="flex flex-col md:flex-row min-h-screen">
-                <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
-                <div className={getLayoutClasses(isCollapsed)}>
-                  <BBChat />
-                </div>
-              </div>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/about-trading"
-          element={
-            <ProtectedRoute>
-              <div className="flex flex-col md:flex-row min-h-screen">
-                <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
-                <div className={getLayoutClasses(isCollapsed)}>
-                  <AboutTrading />
                 </div>
               </div>
             </ProtectedRoute>
